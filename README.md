@@ -57,5 +57,7 @@ dvc remote modify origin --local access_key_id 538c70be81609dd3be8b5a773abc3a78c
 dvc remote modify origin --local secret_access_key 538c70be81609dd3be8b5a773abc3a78c1a7c1a0
 dvc add data/raw
 dvc add data/processed
-
+dvc remote default origin
+pip install "dvc[s3]"
+dvc push
 ```

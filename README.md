@@ -61,3 +61,12 @@ dvc remote default origin
 pip install "dvc[s3]"
 dvc push
 ```
+### First slpit
+- add make_dataset.py
+```
+/bin/python3 /home/ubuntu/workspace/sprint3/DVC/examen-dvc/src/data/make_dataset.py
+git add data/processed.dvc requirements.txt src/data/__init__.py src/data/make_dataset.py
+git commit -a -m "First Slipt Data"
+git push
+dvc push
+```

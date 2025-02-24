@@ -40,10 +40,10 @@ wget https://datascientest-mlops.s3.eu-west-1.amazonaws.com/mlops_dvc_fr/raw.csv
 ```
 - On ajoute dans ./data/.gitignore :
     - raw
-    - preprocessed
+    - processed
 ### Installation DVC
 ```
-pip3 instal dvc
+pip3 install dvc
 dvc init
 dvc config core.analytics false
 ```
@@ -59,14 +59,26 @@ dvc add data/raw
 dvc add data/processed
 dvc remote default origin
 pip install "dvc[s3]"
+dvc commit
 dvc push
 ```
 ### First slpit
 - add make_dataset.py
 ```
 /bin/python3 /home/ubuntu/workspace/sprint3/DVC/examen-dvc/src/data/make_dataset.py
+dvc commit
 git add data/processed.dvc requirements.txt src/data/__init__.py src/data/make_dataset.py
 git commit -a -m "First Slipt Data"
 git push
 dvc push
 ```
+### Normalisation des données (les données sont dans des échelles très variés donc une normalisation est nécessaire)
+- On prend comme index la colonne [0] date/heure
+`df = df.set_index(['date'])`
+- On va utilister la methode Distribution Normale (https://inside-machinelearning.com/normaliser-donnees-2-minutes/#boxzilla-12146)
+- Methode StandardScaler() de scikit-learn
+```
+from sklearn import preprocessing
+transformer = preprocessing.StandardScaler().fit(df_features[])
+```
+

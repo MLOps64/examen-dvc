@@ -73,8 +73,8 @@ git push
 dvc push
 ```
 ### Normalisation des données (les données sont dans des échelles très variés donc une normalisation est nécessaire)
-- On prend comme index la colonne [0] date/heure
-`df = df.set_index(['date'])`
+- On transforme la colonne "date" en timestmp date/heure
+` df['timestamp'] = df['date'].dt.to_timestamp()`
 - On va utilister la methode Distribution Normale (https://inside-machinelearning.com/normaliser-donnees-2-minutes/#boxzilla-12146)
 - Methode StandardScaler() de scikit-learn
 ```

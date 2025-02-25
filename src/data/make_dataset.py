@@ -25,11 +25,29 @@ def main(project_dir,input_filepath, output_filepath):
 
 
 def split_data(df):
-    # Split data into training and testing sets
+    # convert the datetime column to a pandas datetime object
+    df['datetime'] = pd.to_datetime(df['date'], format="%Y-%m-%d  %H:%M:%S")
+
+    # convert the datetime column to an integer
+    df['timestamp'] = df['datetime'].astype(int)
+
+    # divide the resulting integer by the number of nanoseconds in a second
+    df['timestamp'] = df['timestamp'].div(10**9)
+    
+    # drop datime and date columns
+    df.drop(columns=['date','datetime'], inplace=True) #inplace=True permet de mettre à jour df sans le re-affecter
+
+    # reorganisation columns
+    #df = df.reindex(columns=[])
+
+    #
+    logging.info(f"=> Transforme Date to timestamp : {df.info()}")
+
     # target silica_concentrate
-    df.set_index('date', inplace=True)
     target = df['silica_concentrate']
-    feats = df.drop(['silica_concentrate'], axis=1)
+    feats = df.drop(columns=['silica_concentrate'], axis=1)
+    logging.info(f"=> features before split : {feats.head()}")
+    #
     X_train, X_test, y_train, y_test = train_test_split(feats, target, test_size=0.3, random_state=42)
     return X_train, X_test, y_train, y_test
 

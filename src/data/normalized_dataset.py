@@ -28,10 +28,25 @@ def main(project_dir,input_filepath, output_filepath):
     logging.info(f"=> Save data in {os.path.join(project_dir, output_path)}")
 
 def normalize_data(df):
-    logging("=> Normalize data processus wait ...")
-    # index colonne date
-    df.set_index['date']
-    df_features = df.drop(colums='silica_concentrate')
+    logging.info("=> Normalize data processus wait ...")
+    # convert the datetime column to a pandas datetime object
+    df['datetime'] = pd.to_datetime(df['date'], format="%Y-%m-%d  %H:%M:%S")
+
+    # convert the datetime column to an integer
+    df['timestamp'] = df['datetime'].astype(int)
+
+    # divide the resulting integer by the number of nanoseconds in a second
+    df['timestamp'] = df['timestamp'].div(10**9)
+    
+    # drop datime and date columns
+    df.drop(columns=['date','datetime'], inplace=True) #inplace=True permet de mettre à jour df sans le re-affecter
+
+    # reorganisation columns
+    #df = df.reindex(columns=[])
+
+    #
+    logging.info(f"=> Transforme Date to timestamp : {df.info()}")
+    df_features = df.drop(['silica_concentrate'], axis=1)
     df_target = df['silica_concentrate']
     # 
     transfomer = preprocessing.StandardScaler().fit(df_features)

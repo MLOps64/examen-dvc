@@ -48,7 +48,7 @@ def split_data(df):
     feats = df.drop(columns=['silica_concentrate'], axis=1)
     logging.info(f"=> features before split : {feats.head()}")
     #
-    X_train, X_test, y_train, y_test = train_test_split(feats, target, test_size=0.3, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(feats, target, test_size=0.3, random_state=0)
     return X_train, X_test, y_train, y_test
 
 def save_dataframes(X_train, X_test, y_train, y_test, output_folderpath):

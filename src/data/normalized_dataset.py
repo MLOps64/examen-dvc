@@ -24,7 +24,7 @@ def main(project_dir,input_filepath, output_filepath):
     # Split data into training and testing sets
     X_train, X_test, y_train, y_test = normalize_data(df_raw)
     # Save 
-    save_dataframes(X_train, X_test,os.path.join(project_dir,output_path))
+    save_dataframes(X_train, X_test, y_train, y_test,os.path.join(project_dir,output_path))
     logging.info(f"=> Save data in {os.path.join(project_dir, output_path)}")
 
 def normalize_data(df):
@@ -45,21 +45,27 @@ def normalize_data(df):
     #df = df.reindex(columns=[])
 
     #
-    logging.info(f"=> Transforme Date to timestamp : {df.info()}")
+    #logging.info(f"=> Transforme Date to timestamp : {df.info()}")
     df_features = df.drop(['silica_concentrate'], axis=1)
     df_target = df['silica_concentrate']
+    logging.info(f"=> df_features : {df_features.head()} - {df_features.shape} // \n {df_target.info()} - {df_target.shape}")
+
     # 
-    transfomer = preprocessing.StandardScaler().fit(df_features)
+    scale = preprocessing.StandardScaler().fit_transform(df_features)
+    #.info(f"=> scale type  : {type(scale)}")
+    df_scaled = pd.DataFrame(scale)
+    logging.info(f"=> df scaled : {df_scaled.head()} // \n {df_scaled.shape}")
+
     # slipt
-    X_train, X_test, y_train, y_test = train_test_split(df_features, df_target, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(df_scaled, df_target,test_size=0.3, random_state=0)
     return X_train, X_test, y_train, y_test
 
 
 
 
-def save_dataframes(X_train, X_test, output_folderpath):
+def save_dataframes(X_train, X_test, y_train, y_test, output_folderpath):
     # Save dataframes to their respective output file paths
-    for file, filename in zip([X_train, X_test], ['X_train_scaled', 'X_test_scaled']):
+    for file, filename in zip([X_train, X_test, y_train, y_test], ['X_train_scaled', 'X_test_scaled','y_train','y_test']):
         output_filepath = os.path.join(output_folderpath, f'{filename}.csv')
         logging.info(f"=> {output_filepath}")
         #if not os.path.isfile(output_filepath):

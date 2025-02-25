@@ -73,8 +73,8 @@ git push
 dvc push
 ```
 ### Normalisation des données (les données sont dans des échelles très variés donc une normalisation est nécessaire)
-- On transforme la colonne "date" en timestmp date/heure
-` df['timestamp'] = df['date'].dt.to_timestamp()`
+- On transforme la colonne "date" en timestamp 
+` df['timestamp'] = df['datetime'].dt.to_timestamp()`
 - On va utilister la methode Distribution Normale (https://inside-machinelearning.com/normaliser-donnees-2-minutes/#boxzilla-12146)
 - Methode StandardScaler() de scikit-learn
 ```
@@ -82,3 +82,8 @@ from sklearn import preprocessing
 transformer = preprocessing.StandardScaler().fit(df_features[])
 ```
 
+### GridSearch
+- L'analyse prédictive tourne généralement autour de la classification (catégorisation des données) ou de la régression (prévision de valeurs continues) :
+    - Classification : Catégorisation des données lorsque la variable de résultat appartient à un ensemble prédéfini (par exemple, 'Oui' ou 'Non').
+    - Régression : Prévision de valeurs continues lorsque la variable de résultat est réelle ou continue (par exemple, poids ou prix).
+- Ici on va utiliser la régression pour prévoir la concentration

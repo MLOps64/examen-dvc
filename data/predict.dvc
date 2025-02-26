@@ -1,0 +1,6 @@
+outs:
+- md5: 336a594a4fd3c18460c19e8d904998c2.dir
+  size: 5
+  nfiles: 1
+  hash: md5
+  path: predict

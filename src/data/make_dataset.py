@@ -25,25 +25,25 @@ def main(project_dir,input_filepath, output_filepath):
 
 
 def split_data(df):
-    # convert the datetime column to a pandas datetime object
-    df['datetime'] = pd.to_datetime(df['date'], format="%Y-%m-%d  %H:%M:%S")
+    ## convert the datetime column to a pandas datetime object
+    #df['datetime'] = pd.to_datetime(df['date'], format="%Y-%m-%d  %H:%M:%S")
 
-    # convert the datetime column to an integer
-    df['timestamp'] = df['datetime'].astype(int)
+    ## convert the datetime column to an integer
+    #df['timestamp'] = df['datetime'].astype(int)
 
-    # divide the resulting integer by the number of nanoseconds in a second
-    df['timestamp'] = df['timestamp'].div(10**9)
-    
-    # drop datime and date columns
-    df.drop(columns=['date','datetime'], inplace=True) #inplace=True permet de mettre à jour df sans le re-affecter
-
-    # reorganisation columns
-    #df = df.reindex(columns=[])
-
+    ## divide the resulting integer by the number of nanoseconds in a second
+    #df['timestamp'] = df['timestamp'].div(10**9)
     #
-    logging.info(f"=> Transforme Date to timestamp : {df.info()}")
+    ## drop datime, timestamp and date columns
+    #df.drop(columns=['date','datetime','timestamp'], inplace=True) #inplace=True permet de mettre à jour df sans le re-affecter
 
-    # target silica_concentrate
+    ## reorganisation columns
+    ##df = df.reindex(columns=[])
+
+    # Drop date column
+    df.drop(columns=['date'], inplace=True) #inplace=True permet de mettre à jour df
+
+    # Build df target silica_concentrate
     target = df['silica_concentrate']
     feats = df.drop(columns=['silica_concentrate'], axis=1)
     logging.info(f"=> features before split : {feats.head()}")

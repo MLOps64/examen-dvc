@@ -73,8 +73,7 @@ git push
 dvc push
 ```
 ### Normalisation des données (les données sont dans des échelles très variés donc une normalisation est nécessaire)
-- On transforme la colonne "date" en timestamp 
-` df['timestamp'] = df['datetime'].dt.to_timestamp()`
+- On drop la colonne 'date'
 - On va utilister la methode Distribution Normale (https://inside-machinelearning.com/normaliser-donnees-2-minutes/#boxzilla-12146)
 - Methode StandardScaler() de scikit-learn
 ```
@@ -86,4 +85,33 @@ transformer = preprocessing.StandardScaler().fit(df_features[])
 - L'analyse prédictive tourne généralement autour de la classification (catégorisation des données) ou de la régression (prévision de valeurs continues) :
     - Classification : Catégorisation des données lorsque la variable de résultat appartient à un ensemble prédéfini (par exemple, 'Oui' ou 'Non').
     - Régression : Prévision de valeurs continues lorsque la variable de résultat est réelle ou continue (par exemple, poids ou prix).
-- Ici on va utiliser la régression pour prévoir la concentration
+- Ici on va utiliser la régression linéaire pour prévoir la concentration
+- On va tester le randon et le grid
+- production de lr_grid_search_estimator.pkl et lr_randon_search_estimartor. sauvegardé dans models
+- dvc add models/lr_grid_search_estimator.pkl models/lr_randon_search_estimartor
+- Les hyperparametres trouvés par les 2 méthodes sont les mêmes
+```
+2025-02-26 15:24:40,409 - root - INFO - => GridSearchCV :best estimator : LinearRegression(n_jobs=1) - best param : {'copy_X': True, 'fit_intercept': True, 'n_jobs': 1, 'positive': False} - best score: 0.14821434561501406
+```
+- le score est ridicule, bon on continu quand même
+
+### Train model
+- On fait tourner le modéle avec les données X_train_scaled.csv
+
+### Evaluate Model
+- On evalue le modèle avec X_test_scaled.scv
+- On les compare avec y_test
+
+### Metric
+- Le model n'est pas bon du tout !
+```
+{
+    "explained_variance": 0.1507,
+    "mean_squared_log_error": 0.0823,
+    "r2": 0.1506,
+    "MAE": 0.7585,
+    "MSE": 0.96,
+    "RMSE": 0.9798
+}
+
+```

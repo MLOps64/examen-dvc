@@ -5,70 +5,56 @@ import os
 from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 
-input_path = "data/raw"
-output_path = "data/processed"
-cvs_file = "raw.csv"
+# Global varaiables
+processed_path = "data/processed"
+X_test_file = "X_test.csv"
+X_train_file = "X_train.csv"
+X_test_scaled_file = "X_test_scaled.csv"
+X_train_scaled_file = "X_train_scaled.csv"
 
 
 
-def main(project_dir,input_filepath, output_filepath):
+def main(project_dir):
     """ Runs data processing scripts to turn raw data from (../raw) into
         cleaned data ready to be analyzed (saved in../preprocessed).
     """
-    logging.info(f"=> input file path :{input_filepath}, output file path : {output_filepath}")
+    #logging.info(f"=> processed file path :{processed_path}")
     #
-    df_raw = pd.read_csv(os.path.join(project_dir, input_path, cvs_file), sep=',')
-    logging.info(f"=> Read {cvs_file}")
-    # Normalize data
+    df_X_train = pd.read_csv(os.path.join(project_dir, processed_path, X_train_file), sep=',')
+    df_X_test = pd.read_csv(os.path.join(project_dir, processed_path, X_test_file), sep=',')
 
-    # Split data into training and testing sets
-    X_train, X_test, y_train, y_test = normalize_data(df_raw)
-    # Save 
-    save_dataframes(X_train, X_test, y_train, y_test,os.path.join(project_dir,output_path))
-    logging.info(f"=> Save data in {os.path.join(project_dir, output_path)}")
-
-def normalize_data(df):
-    logging.info("=> Normalize data processus wait ...")
-    # convert the datetime column to a pandas datetime object
-    df['datetime'] = pd.to_datetime(df['date'], format="%Y-%m-%d  %H:%M:%S")
-
-    # convert the datetime column to an integer
-    df['timestamp'] = df['datetime'].astype(int)
-
-    # divide the resulting integer by the number of nanoseconds in a second
-    df['timestamp'] = df['timestamp'].div(10**9)
     
-    # drop datime and date columns
-    df.drop(columns=['date','datetime'], inplace=True) #inplace=True permet de mettre à jour df sans le re-affecter
+    # Normalize
+    X_train_scaled, X_test_scaled = normalize_data(df_X_train, df_X_test)
+    # Save 
+    save_dataframes(X_train_scaled, X_test_scaled,os.path.join(project_dir,processed_path))
+    logging.info(f"=> Save data in {os.path.join(project_dir, processed_path)}")
 
-    # reorganisation columns
-    #df = df.reindex(columns=[])
+
+
+def normalize_data(x_train, x_test):
+    logging.info("=> Normalize data processus wait ...")
+
+    # Standardisez les caractéristiques en supprimant la moyenne et en mettant à l’échelle la variance unitaire.
+    scale = preprocessing.StandardScaler()
 
     #
-    #logging.info(f"=> Transforme Date to timestamp : {df.info()}")
-    df_features = df.drop(['silica_concentrate'], axis=1)
-    df_target = df['silica_concentrate']
-    logging.info(f"=> df_features : {df_features.head()} - {df_features.shape} // \n {df_target.info()} - {df_target.shape}")
+    df_x_train = pd.DataFrame(scale.fit_transform(x_train), columns=x_train.columns)
 
-    # 
-    scale = preprocessing.StandardScaler().fit_transform(df_features)
-    #.info(f"=> scale type  : {type(scale)}")
-    df_scaled = pd.DataFrame(scale)
-    logging.info(f"=> df scaled : {df_scaled.head()} // \n {df_scaled.shape}")
+    #
+    df_x_test = pd.DataFrame(scale.fit_transform(x_test), columns=x_test.columns )
 
-    # slipt
-    X_train, X_test, y_train, y_test = train_test_split(df_scaled, df_target,test_size=0.3, random_state=0)
-    return X_train, X_test, y_train, y_test
+    #
+    return df_x_train, df_x_test
 
 
 
 
-def save_dataframes(X_train, X_test, y_train, y_test, output_folderpath):
+def save_dataframes(X_train, X_test, output_folderpath):
     # Save dataframes to their respective output file paths
-    for file, filename in zip([X_train, X_test, y_train, y_test], ['X_train_scaled', 'X_test_scaled','y_train','y_test']):
-        output_filepath = os.path.join(output_folderpath, f'{filename}.csv')
-        logging.info(f"=> {output_filepath}")
-        #if not os.path.isfile(output_filepath):
+    for file, filename in zip([X_train, X_test], [X_train_scaled_file, X_test_scaled_file]):
+        output_filepath = os.path.join(output_folderpath, f'{filename}')
+        # Write file
         file.to_csv(output_filepath, index=False)
 
 if __name__ == '__main__':
@@ -76,6 +62,6 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format=log_fmt)
     #
     project_dir = Path(__file__).resolve().parents[2]
-    logging.info(f"=> Projec dir : {project_dir}")
+    logging.info(f"=> Project dir : {project_dir}")
     #
-    main(project_dir, input_path, output_path)
+    main(project_dir)

@@ -29,14 +29,13 @@ def main(project_dir):
 
     # Make predictions
     predicted = lr.predict(X_test_scaled)
-    logging.info(predicted)
+    logging.info(f"=> predicted  : {predicted}")
     
     # Summarize the fit of the model
     mse = np.mean((predicted-y_test)**2)
     logging.info(f"=> lr.intercept_ : {lr.intercept_}")
     logging.info(f"=> lr.coef_      : {lr.coef_}")
     logging.info(f"=> mse           : {mse}")
-    logging.info(f"=> precision     : {lr.intercept_}")
 
     # Regression metrics
     explained_variance=metrics.explained_variance_score(y_test, predicted)

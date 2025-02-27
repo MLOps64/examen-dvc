@@ -1,5 +1,0 @@
-outs:
-- md5: 062a584f5e5d75b782ad8d41cfb3a2f6
-  size: 1039
-  hash: md5
-  path: linear_normelized_best_param.joblib

@@ -1,0 +1,20 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python src/data/make_dataset.py
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 83524b9ab09f4ac15af2c899d45e60eb.dir
+      size: 333773
+      nfiles: 2
+    - path: src/data/make_dataset.py
+      hash: md5
+      md5: ceef8a3d7447210d728b68f6c5c4e00e
+      size: 3512
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: 4fe7680e266dee203c3913f926bb990f.dir
+      size: 294499
+      nfiles: 4

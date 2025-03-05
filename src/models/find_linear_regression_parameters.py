@@ -21,40 +21,50 @@ def main(project_dir):
     }
 
     # 
-    X_train_scaled, y_train, X_train = get_train_data(project_dir)
+    X_train_scaled, y_train, X_train, X_test_scaled, y_test = get_train_data(project_dir)
 
     # LinearRegresion
     lr =  LinearRegression()
 
-    # RandomizedSearchCV
-    lr_randon_search = RandomizedSearchCV(estimator=lr,param_distributions=params_space, n_iter=30, cv=5, verbose=1)
+    # RandomizedSearchCV , n_iter=30, cv=5
+    lr_randon_search = RandomizedSearchCV(estimator=lr,param_distributions=params_space, verbose=1)
     lr_randon_search.fit(X_train_scaled, y_train)
+    score = lr_randon_search.score(X_test_scaled, y_test)
+    logging.info(f"=> score {score}")
     #print(lr_randon_search.best_estimator_)
-    logging.info(f"=> RandomizedSearchCV with Scaled     : best estimator : {lr_randon_search.best_estimator_} - best params : {lr_randon_search.best_params_} - best score : {lr_randon_search.best_score_}")
+    logging.info(f"=> RandomizedSearchCV with Scaled : best estimator : {lr_randon_search.best_estimator_} - best params : {lr_randon_search.best_params_} - best cross vzlidztion score : {lr_randon_search.best_score_}")
+    #analyse de la validation croisée
+    result = pd.DataFrame(lr_randon_search.cv_results_)
+    logging.info(f"=> analyse : {result}")
     #
-    lr_randon_search.fit(X_train, y_train)
+    #lr_randon_search.fit(X_train, y_train)
     #print(lr_randon_search.best_estimator_)
-    logging.info(f"=> RandomizedSearchCV with Not Scaled : best estimator : {lr_randon_search.best_estimator_} - best params : {lr_randon_search.best_params_} - best score : {lr_randon_search.best_score_}")
+    #logging.info(f"=> RandomizedSearchCV with Not Scaled : best estimator : {lr_randon_search.best_estimator_} - best params : {lr_randon_search.best_params_} - best score : {lr_randon_search.best_score_}")
 
-    # GridSearchCV
-    lr_grid_search = GridSearchCV(estimator=lr,param_grid=params_space, n_jobs=5, cv=5, verbose=1)
+    # GridSearchCV , n_jobs=5, cv=5
+    lr_grid_search = GridSearchCV(estimator=lr,param_grid=params_space, verbose=1)
     lr_grid_search.fit(X_train_scaled, y_train)
-    logging.info(f"=> GridSearchCV  with Scaled         :best estimator : {lr_grid_search.best_estimator_} - best param : {lr_grid_search.best_params_} - best score: {lr_grid_search.best_score_}")
+    score = lr_grid_search.score( X_test_scaled, y_test)
+    logging.info(f"=> score {score}")
+    logging.info(f"=> GridSearchCV  with Scaled :best estimator : {lr_grid_search.best_estimator_} - best param : {lr_grid_search.best_params_} - best cross vzlidztion  score: {lr_grid_search.best_score_}")
+     #analyse de la validation croisée
+    result = pd.DataFrame(lr_grid_search.cv_results_)
+    logging.info(f"=> analyse : {result}")
     #
-    lr_grid_search = GridSearchCV(estimator=lr,param_grid=params_space, n_jobs=5, cv=5, verbose=1)
-    lr_grid_search.fit(X_train_scaled, y_train)
-    logging.info(f"=> GridSearchCV  with Not Scaled     :best estimator : {lr_grid_search.best_estimator_} - best param : {lr_grid_search.best_params_} - best score: {lr_grid_search.best_score_}")
+    #lr_grid_search = GridSearchCV(estimator=lr,param_grid=params_space, n_jobs=5, cv=5, verbose=1)
+    #lr_grid_search.fit(X_train_scaled, y_train)
+    #logging.info(f"=> GridSearchCV  with Not Scaled     :best estimator : {lr_grid_search.best_estimator_} - best param : {lr_grid_search.best_params_} - best score: {lr_grid_search.best_score_}")
 
 
     # Save estimator
-    save_estimator(project_dir,"lr_randon_search_estimator.pkl", lr_randon_search)
+    save_estimator(project_dir,"lr_random_search_estimator.pkl", lr_randon_search)
     save_estimator(project_dir,"lr_grid_search_estimator.pkl", lr_grid_search)
 
 def get_train_data(project_dir):
     #
     #X_test = pd.read_csv(os.path.join(project_dir, input_path,'X_test.csv' ), sep=',')
-    #X_test_scaled = pd.read_csv(os.path.join(project_dir, input_path,'X_test_scaled.csv' ), sep=',')
-    #y_test = pd.read_csv(os.path.join(project_dir, input_path,'y_test.csv' ), sep=',')
+    X_test_scaled = pd.read_csv(os.path.join(project_dir, input_path,'X_test_scaled.csv' ), sep=',')
+    y_test = pd.read_csv(os.path.join(project_dir, input_path,'y_test.csv' ), sep=',')
 
     #
     X_train = pd.read_csv(os.path.join(project_dir, input_path,'X_train.csv' ), sep=',')
@@ -62,7 +72,7 @@ def get_train_data(project_dir):
     y_train = pd.read_csv(os.path.join(project_dir, input_path,'y_train.csv' ), sep=',')
 
     #
-    return X_train_scaled, y_train, X_train
+    return X_train_scaled, y_train, X_train, X_test_scaled, y_test
 
 
 def save_estimator(project_dir,model_filename,model):

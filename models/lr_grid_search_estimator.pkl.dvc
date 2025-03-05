@@ -1,5 +1,0 @@
-outs:
-- md5: b9952ce4d912a9c8d8e8eb8c9d4df4a9
-  size: 11791
-  hash: md5
-  path: lr_grid_search_estimator.pkl

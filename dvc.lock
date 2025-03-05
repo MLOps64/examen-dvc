@@ -1,7 +1,9 @@
 schema: '2.0'
 stages:
   prepare:
-    cmd: python src/data/make_dataset.py
+    cmd:
+    - python src/data/make_dataset.py
+    - python src/data/normalized_dataset.py
     deps:
     - path: data/raw
       hash: md5
@@ -10,11 +12,84 @@ stages:
       nfiles: 2
     - path: src/data/make_dataset.py
       hash: md5
-      md5: ceef8a3d7447210d728b68f6c5c4e00e
-      size: 3512
+      md5: bb48c297c41d819d5ffdd09bcb56dcb5
+      size: 3515
+    - path: src/data/normalized_dataset.py
+      hash: md5
+      md5: e3b93151fe291148b47a694cd688c8b6
+      size: 2785
     outs:
     - path: data/processed
       hash: md5
-      md5: 4fe7680e266dee203c3913f926bb990f.dir
-      size: 294499
-      nfiles: 4
+      md5: 99a3cfab0b0fb4f420fee39f1ff5d51c.dir
+      size: 579094
+      nfiles: 6
+  standardization:
+    cmd: python src/data/normalized_dataset.py
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 83524b9ab09f4ac15af2c899d45e60eb.dir
+      size: 333773
+      nfiles: 2
+    - path: src/data/normalized_dataset.py
+      hash: md5
+      md5: e3b93151fe291148b47a694cd688c8b6
+      size: 2785
+  hyperparameter:
+    cmd: python src/models/find_linear_regression_parameters.py
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 99a3cfab0b0fb4f420fee39f1ff5d51c.dir
+      size: 579094
+      nfiles: 6
+    - path: src/models/find_linear_regression_parameters.py
+      hash: md5
+      md5: 4c3b5021eef3288947c09800a5451828
+      size: 4028
+    outs:
+    - path: models/lr_grid_search_estimator.pkl
+      hash: md5
+      md5: 1eb47ae3ef28aaf98bb70a939a0580e0
+      size: 11775
+    - path: models/lr_random_search_estimator.pkl
+      hash: md5
+      md5: 72c24404120d20b856cee7eae355fbc3
+      size: 4519
+  train:
+    cmd:
+    - python src/models/train_linear_regression_model.py
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 99a3cfab0b0fb4f420fee39f1ff5d51c.dir
+      size: 579094
+      nfiles: 6
+    - path: src/models/train_linear_regression_model.py
+      hash: md5
+      md5: 4a6df6f327c55a746245d1af914c35df
+      size: 2842
+    outs:
+    - path: models/lr_model.joblib
+      hash: md5
+      md5: fb818a96cb1c34fac6324e481a9329ff
+      size: 1135
+  evaluate:
+    cmd:
+    - python src/models/evaluate_linear_regression_model.py
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 99a3cfab0b0fb4f420fee39f1ff5d51c.dir
+      size: 579094
+      nfiles: 6
+    - path: src/models/evaluate_linear_regression_model.py
+      hash: md5
+      md5: 93423512ea232b72d3778f6f10b8f4e3
+      size: 3151
+    outs:
+    - path: metrics/lr_metrics.json
+      hash: md5
+      md5: 6dd303367f498d362025440fe65a4b6e
+      size: 185

@@ -10,18 +10,20 @@ output_path = "data/processed"
 cvs_file = "raw.csv"
 
 def main(project_dir,input_filepath, output_filepath):
+    #
+    log = logging.getLogger("main")
     """ Runs data processing scripts to turn raw data from (../raw) into
         cleaned data ready to be analyzed (saved in../preprocessed).
     """
-    logging.info(f"=> input file path :{input_filepath}, output file path : {output_filepath}")
+    log.info(f"=> input file path :{input_filepath}, output file path : {output_filepath}")
     #
     df_raw = pd.read_csv(os.path.join(project_dir, input_path, cvs_file), sep=',')
-    logging.info(f"=> Read {cvs_file}")
+    log.info(f"=> Read {cvs_file}")
     # Split data into training and testing sets
     X_train, X_test, y_train, y_test = split_data(df_raw)
     # Save 
     save_dataframes(X_train, X_test, y_train, y_test,os.path.join(project_dir,output_path))
-    logging.info(f"=> Save data in {os.path.join(project_dir, output_path)}")
+    log.info(f"=> Save data in {os.path.join(project_dir, output_path)}")
 
 
 def split_data(df):
@@ -52,6 +54,17 @@ def split_data(df):
     return X_train, X_test, y_train, y_test
 
 def save_dataframes(X_train, X_test, y_train, y_test, output_folderpath):
+    # check
+    if os.path.exists(os.path.join(output_folderpath)) == False :  
+        try:
+            os.makedirs(os.path.join(output_folderpath))
+            print(f"Nested directories '{os.path.join(output_folderpath)}' created successfully.")
+        except FileExistsError:
+            print(f"One or more directories in '{os.path.join(output_folderpath)}' already exist.")
+        except PermissionError:
+            print(f"Permission denied: Unable to create '{os.path.join(output_folderpath)}'.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
     # Save dataframes to their respective output file paths
     for file, filename in zip([X_train, X_test, y_train, y_test], ['X_train', 'X_test', 'y_train', 'y_test']):
         output_filepath = os.path.join(output_folderpath, f'{filename}.csv')

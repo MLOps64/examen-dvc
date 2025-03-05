@@ -51,6 +51,17 @@ def normalize_data(x_train, x_test):
 
 
 def save_dataframes(X_train, X_test, output_folderpath):
+    # check
+    if os.path.exists(os.path.join(output_folderpath)) == False :  
+        try:
+            os.makedirs(os.path.join(output_folderpath))
+            print(f"Nested directories '{os.path.join(output_folderpath)}' created successfully.")
+        except FileExistsError:
+            print(f"One or more directories in '{os.path.join(output_folderpath)}' already exist.")
+        except PermissionError:
+            print(f"Permission denied: Unable to create '{os.path.join(output_folderpath)}'.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
     # Save dataframes to their respective output file paths
     for file, filename in zip([X_train, X_test], [X_train_scaled_file, X_test_scaled_file]):
         output_filepath = os.path.join(output_folderpath, f'{filename}')
